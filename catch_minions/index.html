@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <img class="logo" src="logo.png" alt="logo gry"></img>
+            <div class="field" onmousemove="mouseCoordinates(event)">
+                <div class="time" id="time"></div>
+                <div class="points" id="points"></div>
+                <div class="misses" id="misses"></div>
+                <div class="startButton" id="start" onclick="startGame()">START</div>
+                <div class="end" id="gameover"></div>
+                <div class="result" id="result" onclick="result()"></div>
+                <canvas width="1200" height="600" id="canvas"></canvas>
+            </div>
+        </div>
+        <script src="game.js"></script>
+    </body>
+
+</html>

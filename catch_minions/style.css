@@ -1,0 +1,99 @@
+@font-face {
+  font-family: minionFont;
+  src: url(PumpOpti-DemiBold.otf);
+}
+
+body {
+  background-color: white;
+}
+
+.field {
+  width: 1200px;
+  height: 600px;
+  position: relative;
+  margin: 0 auto;
+  border-radius: 50px;
+  background-image: url("lab2.jpg");
+  background-size: cover;
+  background-color: #fff;
+}
+
+.logo {
+  width: 800px;
+  display: block;
+  margin: 65px auto 50px auto;
+  width: 50%;
+}
+
+.startButton {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: minionFont;
+  font-size: 80px;
+  border-radius: 50px;
+  cursor: pointer;
+  color: white;
+}
+
+.startButton:hover {
+  color: rgb(243, 203, 4);
+}
+
+.end {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: minionFont;
+  text-align: center;
+  font-size: 80px;
+  border-radius: 50px;
+  color: rgb(243, 203, 4);
+}
+
+.result {
+  position: absolute;
+  top: 82%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: minionFont;
+  text-align: center;
+  font-size: 40px;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+}
+
+.result:hover {
+  color: rgb(243, 203, 4);
+}
+
+.time,
+.points {
+  color: white;
+  border-radius: 50px;
+  font-family: minionFont;
+  text-align: right;
+  font-size: 40px;
+}
+
+.time {
+  position: absolute;
+  right: 40px;
+  top: 30px;
+}
+
+.points {
+  position: absolute;
+  right: 40px;
+  top: 80px;
+}
+
+.resultDraw {
+  font-family: minionFont;
+  font-size: 20px;
+  border-radius: 50px;
+  color: black;
+}
