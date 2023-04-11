@@ -7,6 +7,7 @@
 
     <body>
         <div class="container">
+
             <img class="logo" src="logo.png" alt="logo gry"></img>
             <div class="field" onmousemove="mouseCoordinates(event)">
                 <div class="time" id="time"></div>
@@ -15,7 +16,12 @@
                 <div class="startButton" id="start" onclick="startGame()">START</div>
                 <div class="end" id="gameover"></div>
                 <div class="result" id="result" onclick="result()"></div>
+
                 <canvas width="1200" height="600" id="canvas"></canvas>
+                <div id="panel">
+                    <H3>RESULT:</H3>
+
+                </div>
             </div>
         </div>
         <script src="game.js"></script>

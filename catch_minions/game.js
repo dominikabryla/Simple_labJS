@@ -2,21 +2,20 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let happyMinion = new Image(90, 120);
-happyMinion.src = "minion.png";
 let crazyMinion = new Image(140, 150);
+happyMinion.src = "minion.png";
 crazyMinion.src = "crazy.png";
 
 let maxMinions = 3;
-let amountMinions = 0;
+let clickedHappyMinions = 0;
+let allHappyMinions = 0;
+let allMinions = [];
 let points = 0;
 let misses = 0;
 let startTime = 0;
 let endTime = 0;
 let timeLeft = 60;
 let drawInterval;
-let clickedHappyMinions = 0;
-let allHappyMinions = 0;
-let allMinions = [];
 
 let backgroundImage = new Image();
 backgroundImage.src = "lab2.png";
@@ -40,6 +39,8 @@ function checkClickOnCanvasObject(canvas, object, event) {
   );
 }
 
+///// -----------------------TWORZENIE ----------------------- \\\\\
+
 function createMinion(x, y, type) {
   let height, width, image;
   if (type === "happy") {
@@ -62,6 +63,7 @@ function createMinion(x, y, type) {
     disappearingTime: null,
     clickingTime: null,
     isClicked: false,
+    clickDistance: null,
     height,
     width,
     x,
@@ -81,6 +83,10 @@ function createMinion(x, y, type) {
         document.getElementById("points").innerHTML = "PENALTY: " + points;
       } else if (minion.type === "happy") {
         clickedHappyMinions++;
+        minion.clickDistance = Math.sqrt(
+          Math.pow(event.clientX - minion.centerX, 2) +
+            Math.pow(event.clientY - minion.centerY, 2)
+        );
       }
       ctx.clearRect(minion.x, minion.y, minion.width, minion.height);
     }
@@ -128,53 +134,139 @@ function createMinions() {
 
   return minions;
 }
+
+///// -----------------------OBLICZENIA ----------------------- \\\\\
+
 function averageReactionTimeOnHappyMinions() {
   let reactionTimes = [];
 
+  allMinions.forEach((minion) => {
+    if (minion.type === "happy" && minion.isClicked) {
+      reactionTimes.push(minion.clickingTime - minion.appearingTime);
+    }
+  });
+  if (reactionTimes.length === 0) {
+    return 0;
+  }
+  const sum = reactionTimes.reduce((acc, val) => acc + val);
   const average = sum / reactionTimes.length;
   return average;
 }
 
-function reactionTimeStandardDeviationOnHappyMinions() {}
+function reactionTimeStandardDeviationOnHappyMinions() {
+  let reactionTimes = [];
+
+  allMinions.forEach((minion) => {
+    if (minion.type === "happy" && minion.isClicked) {
+      reactionTimes.push(minion.clickingTime - minion.appearingTime);
+    }
+  });
+
+  if (reactionTimes.length === 0) {
+    return 0;
+  }
+
+  const average =
+    reactionTimes.reduce((acc, val) => acc + val) / reactionTimes.length;
+  const variance =
+    reactionTimes.reduce((acc, val) => acc + Math.pow(val - average, 2), 0) /
+    reactionTimes.length;
+  const stdDev = Math.sqrt(variance);
+
+  return stdDev;
+}
 
 function averageClickDistanceFromCenter() {
   let distances = [];
 
+  allMinions.forEach((minion) => {
+    if (minion.type === "happy" && minion.isClicked) {
+      distances.push(minion.clickDistance);
+    }
+  });
+
+  if (distances.length === 0) {
+    return 0;
+  }
+
+  const sum = distances.reduce((acc, val) => acc + val);
   const average = sum / distances.length;
   return average;
 }
+
+function standardDeviationClickDistanceFromCenter() {
+  let distances = [];
+
+  allMinions.forEach((minion) => {
+    if (minion.type === "happy" && minion.isClicked) {
+      distances.push(minion.clickDistance);
+    }
+  });
+
+  if (distances.length === 0) {
+    return 0;
+  }
+
+  const average = distances.reduce((acc, val) => acc + val) / distances.length;
+  const variance =
+    distances.reduce((acc, val) => acc + Math.pow(val - average, 2), 0) /
+    distances.length;
+  const stdDev = Math.sqrt(variance);
+
+  return stdDev;
+}
+///// -----------------------NAPISY,PRZYCISKI ----------------------- \\\\\
 
 function hideButton() {
   const element = document.getElementById("start");
   element.remove();
 }
 
-// function result() {
-//   let misses = allHappyMinions - clickedHappyMinions;
-//   let avgReact = averageReactionTimeOnHappyMinions() / 1000;
-//   let standardReact = standardReactionTimeOnHappyMinions() / 1000;
-//   let message =
-//     "all happy minions: " +
-//     allHappyMinions +
-//     "\n" +
-//     "number of missed objects: " +
-//     misses +
-//     "\n" +
-//     "penalty points for clicking crazy minions" +
-//     points +
-//     "\n" +
-//     "average reaction time:" +
-//     avgReact +
-//     "seconds" +
-//     "\n" +
-//     "standard deviation of reaction time:" +
-//     standardReact +
-//     "seconds";
-//   "\n" + "average distance of click from object center:";
-//   // "\n" +
-//   // "standard deviation of click distance from object center:"
+function addParaToPanel(message) {
+  const para = document.createElement("p");
+  const node = document.createTextNode(message);
+  para.appendChild(node);
+  const element = document.getElementById("panel");
+  element.appendChild(para);
+}
 
-// }
+function result() {
+  document.getElementById("result").style.display = "none";
+  document.getElementById("panel").style.display = "block";
+  const message = "all happy minions: " + allHappyMinions + "\n";
+  addParaToPanel(message);
+
+  misses = allHappyMinions - clickedHappyMinions;
+  const message2 = "number of missed objects: " + misses + "\n";
+  addParaToPanel(message2);
+
+  const message3 =
+    "penalty points for clicking crazy minions: " + points + "\n";
+  addParaToPanel(message3);
+
+  let avgReact = averageReactionTimeOnHappyMinions() / 1000;
+  const message4 = "average reaction time: " + avgReact + " s" + "\n";
+  addParaToPanel(message4);
+
+  let stdReact = reactionTimeStandardDeviationOnHappyMinions() / 100;
+  const message5 =
+    "standard deviation of reaction time:" + stdReact + " s" + "\n";
+  addParaToPanel(message5);
+
+  let avgClick = Math.floor(averageClickDistanceFromCenter());
+  const message6 =
+    "average distance of click from object center: " + avgClick + " px" + "\n";
+  addParaToPanel(message6);
+
+  let stdClick = Math.floor(standardDeviationClickDistanceFromCenter());
+  const message7 =
+    "standard deviation of click distance from object center: " +
+    stdClick +
+    " px";
+  addParaToPanel(message7);
+}
+
+///// ----------------------- PLAY ----------------------- \\\\\
 
 function updateTime() {
   let currentTime = Date.now();
@@ -198,8 +290,8 @@ function startGame() {
   points = 0;
   misses = 0;
   startTime = Date.now();
-  endTime = startTime + 6000;
-  drawInterval = setInterval(createMinions, 2000); // create minions every 2 seconds
+  endTime = startTime + 60000;
+  drawInterval = setInterval(createMinions, 3500); // create minions every 2 seconds
   setTimeout(updateTime, 1000);
   document.getElementById("time").innerHTML = "TIME: " + timeLeft + "s";
   document.getElementById("points").innerHTML = "PENALTY: " + points;
